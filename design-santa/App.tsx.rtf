@@ -1,0 +1,405 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2865
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red255\green255\blue254;\red0\green0\blue0;
+\red14\green110\blue109;\red144\green1\blue18;\red15\green112\blue1;\red19\green118\blue70;\red191\green28\blue37;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c100000;\cssrgb\c100000\c100000\c99608;\cssrgb\c0\c0\c0;
+\cssrgb\c0\c50196\c50196;\cssrgb\c63922\c8235\c8235;\cssrgb\c0\c50196\c0;\cssrgb\c3529\c52549\c34510;\cssrgb\c80392\c19216\c19216;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 import\cf0 \strokec4  \cf5 \strokec5 React\cf0 \strokec4 , \{ useState, useEffect \} \cf2 \strokec2 from\cf0 \strokec4  \cf6 \strokec6 'react'\cf0 \strokec4 ;\cb1 \
+\cf2 \cb3 \strokec2 import\cf0 \strokec4  \{ \cf5 \strokec5 Container\cf0 \strokec4 , \cf5 \strokec5 Header\cf0 \strokec4 , \cf5 \strokec5 Section\cf0 \strokec4 , \cf5 \strokec5 Button\cf0 \strokec4 , \cf5 \strokec5 StatDisplay\cf0 \strokec4 , \cf5 \strokec5 AdminTable\cf0 \strokec4 , \cf5 \strokec5 Badge\cf0 \strokec4 , \cf5 \strokec5 TextInput\cf0 \strokec4  \} \cf2 \strokec2 from\cf0 \strokec4  \cf6 \strokec6 './components/UiComponents'\cf0 \strokec4 ;\cb1 \
+\cf2 \cb3 \strokec2 import\cf0 \strokec4  \{ \cf5 \strokec5 DESIGNERS\cf0 \strokec4 , \cf5 \strokec5 DesignerName\cf0 \strokec4 , \cf5 \strokec5 Assignment\cf0 \strokec4  \} \cf2 \strokec2 from\cf0 \strokec4  \cf6 \strokec6 './types'\cf0 \strokec4 ;\cb1 \
+\cf2 \cb3 \strokec2 import\cf0 \strokec4  \{ supabase, isSupabaseConfigured, resetDatabase \} \cf2 \strokec2 from\cf0 \strokec4  \cf6 \strokec6 './services/supabaseClient'\cf0 \strokec4 ;\cb1 \
+\cf2 \cb3 \strokec2 import\cf0 \strokec4  \{ generateMissionBrief \} \cf2 \strokec2 from\cf0 \strokec4  \cf6 \strokec6 './services/geminiService'\cf0 \strokec4 ;\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 // Fallback mock storage for demo if Supabase isn't set up\cf0 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 const\cf0 \strokec4  \cf5 \strokec5 LOCAL_STORAGE_KEY\cf0 \strokec4  = \cf6 \strokec6 'santa_assignments_local_v2'\cf0 \strokec4 ;\cb1 \
+\cf2 \cb3 \strokec2 const\cf0 \strokec4  \cf5 \strokec5 ADMIN_PASSWORD\cf0 \strokec4  = \cf6 \strokec6 'designprotocol'\cf0 \strokec4 ;\cb1 \
+\
+\cf2 \cb3 \strokec2 const\cf0 \strokec4  \cf5 \strokec5 App\cf0 \strokec4 : \cf5 \strokec5 React\cf0 \strokec4 .\cf5 \strokec5 FC\cf0 \strokec4  = () => \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \cb3   \cf2 \strokec2 const\cf0 \strokec4  [currentUser, setCurrentUser] = useState<\cf5 \strokec5 DesignerName\cf0 \strokec4  | \cf2 \strokec2 null\cf0 \strokec4 >(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [assignment, setAssignment] = useState<\cf5 \strokec5 Assignment\cf0 \strokec4  | \cf2 \strokec2 null\cf0 \strokec4 >(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [isDrawing, setIsDrawing] = useState(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [allAssignments, setAllAssignments] = useState<\cf5 \strokec5 Assignment\cf0 \strokec4 []>([]);\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [error, setError] = useState<\cf2 \strokec2 string\cf0 \strokec4  | \cf2 \strokec2 null\cf0 \strokec4 >(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [loading, setLoading] = useState(\cf2 \strokec2 true\cf0 \strokec4 );\cb1 \
+\cb3   \cb1 \
+\cb3   \cf7 \strokec7 // Admin State\cf0 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [showAdmin, setShowAdmin] = useState(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [adminPasswordInput, setAdminPasswordInput] = useState(\cf6 \strokec6 ''\cf0 \strokec4 );\cb1 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [isAdminAuthenticated, setIsAdminAuthenticated] = useState(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\
+\cb3   \cf7 \strokec7 // Initial Load & Event Listeners\cf0 \cb1 \strokec4 \
+\cb3   useEffect(() => \{\cb1 \
+\cb3     \cf2 \strokec2 const\cf0 \strokec4  init = \cf2 \strokec2 async\cf0 \strokec4  () => \{\cb1 \
+\cb3       \cf2 \strokec2 await\cf0 \strokec4  fetchData();\cb1 \
+\cb3       \cf2 \strokec2 if\cf0 \strokec4  (isSupabaseConfigured()) \{\cb1 \
+\cb3          supabase!\cb1 \
+\cb3           .channel(\cf6 \strokec6 'table-db-changes'\cf0 \strokec4 )\cb1 \
+\cb3           .on(\cf6 \strokec6 'postgres_changes'\cf0 \strokec4 , \{ event: \cf6 \strokec6 '*'\cf0 \strokec4 , schema: \cf6 \strokec6 'public'\cf0 \strokec4 , table: \cf6 \strokec6 'secret_santa_assignments'\cf0 \strokec4  \}, () => \{\cb1 \
+\cb3               fetchData();\cb1 \
+\cb3           \})\cb1 \
+\cb3           .subscribe();\cb1 \
+\cb3       \}\cb1 \
+\cb3       setLoading(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3     \};\cb1 \
+\
+\cb3     \cf7 \strokec7 // Listen for admin toggle event from footer\cf0 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 const\cf0 \strokec4  toggleAdminHandler = () => setShowAdmin(prev => !prev);\cb1 \
+\cb3     window.addEventListener(\cf6 \strokec6 'toggle-admin'\cf0 \strokec4 , toggleAdminHandler);\cb1 \
+\
+\cb3     init();\cb1 \
+\cb3     \cf2 \strokec2 return\cf0 \strokec4  () => window.removeEventListener(\cf6 \strokec6 'toggle-admin'\cf0 \strokec4 , toggleAdminHandler);\cb1 \
+\cb3   \}, []);\cb1 \
+\
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  fetchData = \cf2 \strokec2 async\cf0 \strokec4  () => \{\cb1 \
+\cb3     \cf2 \strokec2 if\cf0 \strokec4  (isSupabaseConfigured() && supabase) \{\cb1 \
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  \{ data, error \} = \cf2 \strokec2 await\cf0 \strokec4  supabase.\cf2 \strokec2 from\cf0 \strokec4 (\cf6 \strokec6 'secret_santa_assignments'\cf0 \strokec4 ).select(\cf6 \strokec6 '*'\cf0 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf0 \strokec4  (!error && data) \{\cb1 \
+\cb3         setAllAssignments(data);\cb1 \
+\cb3       \}\cb1 \
+\cb3     \} \cf2 \strokec2 else\cf0 \strokec4  \{\cb1 \
+\cb3       \cf7 \strokec7 // Local fallback\cf0 \cb1 \strokec4 \
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  localData = localStorage.getItem(\cf5 \strokec5 LOCAL_STORAGE_KEY\cf0 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf0 \strokec4  (localData) \{\cb1 \
+\cb3         setAllAssignments(\cf5 \strokec5 JSON\cf0 \strokec4 .parse(localData));\cb1 \
+\cb3       \}\cb1 \
+\cb3     \}\cb1 \
+\cb3   \};\cb1 \
+\
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  handleLogin = (name: \cf5 \strokec5 DesignerName\cf0 \strokec4 ) => \{\cb1 \
+\cb3     setCurrentUser(name);\cb1 \
+\cb3     \cf7 \strokec7 // Check if user already has an assignment\cf0 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 const\cf0 \strokec4  existing = allAssignments.find(a => a.santa === name);\cb1 \
+\cb3     setAssignment(existing || \cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3     setError(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3   \};\cb1 \
+\
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  performDraw = \cf2 \strokec2 async\cf0 \strokec4  () => \{\cb1 \
+\cb3     \cf2 \strokec2 if\cf0 \strokec4  (!currentUser) \cf2 \strokec2 return\cf0 \strokec4 ;\cb1 \
+\cb3     setIsDrawing(\cf2 \strokec2 true\cf0 \strokec4 );\cb1 \
+\cb3     setError(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\
+\cb3     \cf2 \strokec2 try\cf0 \strokec4  \{\cb1 \
+\cb3       \cf7 \strokec7 // 1. Determine available receivers\cf0 \cb1 \strokec4 \
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  takenReceivers = \cf2 \strokec2 new\cf0 \strokec4  \cf5 \strokec5 Set\cf0 \strokec4 (allAssignments.map(a => a.receiver));\cb1 \
+\cb3       \cb1 \
+\cb3       \cf7 \strokec7 // Filter candidates\cf0 \cb1 \strokec4 \
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  candidates = \cf5 \strokec5 DESIGNERS\cf0 \strokec4 .filter(d => \cb1 \
+\cb3         d !== currentUser && !takenReceivers.has(d)\cb1 \
+\cb3       );\cb1 \
+\
+\cb3       \cf2 \strokec2 if\cf0 \strokec4  (candidates.length === \cf8 \strokec8 0\cf0 \strokec4 ) \{\cb1 \
+\cb3         \cf2 \strokec2 throw\cf0 \strokec4  \cf2 \strokec2 new\cf0 \strokec4  \cf5 \strokec5 Error\cf0 \strokec4 (\cf6 \strokec6 "MATRIX ERROR: No valid candidates. Manual intervention required."\cf0 \strokec4 );\cb1 \
+\cb3       \}\cb1 \
+\
+\cb3       \cf7 \strokec7 // 2. Random selection\cf0 \cb1 \strokec4 \
+\cb3       \cf2 \strokec2 await\cf0 \strokec4  \cf2 \strokec2 new\cf0 \strokec4  \cf5 \strokec5 Promise\cf0 \strokec4 (r => setTimeout(r, \cf8 \strokec8 1500\cf0 \strokec4 ));\cb1 \
+\cb3       \cb1 \
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  randomIndex = \cf5 \strokec5 Math\cf0 \strokec4 .floor(\cf5 \strokec5 Math\cf0 \strokec4 .random() * candidates.length);\cb1 \
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  selectedReceiver = candidates[randomIndex];\cb1 \
+\
+\cb3       \cf7 \strokec7 // 3. Generate Gemini Content\cf0 \cb1 \strokec4 \
+\cb3       \cf2 \strokec2 let\cf0 \strokec4  missionBrief = \cf6 \strokec6 "Accessing secure data..."\cf0 \strokec4 ;\cb1 \
+\cb3       \cf2 \strokec2 try\cf0 \strokec4  \{\cb1 \
+\cb3         missionBrief = \cf2 \strokec2 await\cf0 \strokec4  generateMissionBrief(selectedReceiver);\cb1 \
+\cb3       \} \cf2 \strokec2 catch\cf0 \strokec4  (e) \{\cb1 \
+\cb3         missionBrief = \cf6 \strokec6 `Objective: Secure a gift for \cf0 \strokec4 $\{selectedReceiver\}\cf6 \strokec6 . Design parameters are open.`\cf0 \strokec4 ;\cb1 \
+\cb3       \}\cb1 \
+\
+\cb3       \cf2 \strokec2 const\cf0 \strokec4  newAssignment: \cf5 \strokec5 Assignment\cf0 \strokec4  = \{\cb1 \
+\cb3         santa: currentUser,\cb1 \
+\cb3         receiver: selectedReceiver,\cb1 \
+\cb3         timestamp: \cf2 \strokec2 new\cf0 \strokec4  \cf5 \strokec5 Date\cf0 \strokec4 ().toISOString(),\cb1 \
+\cb3         mission_brief: missionBrief\cb1 \
+\cb3       \};\cb1 \
+\
+\cb3       \cf7 \strokec7 // 4. Persist\cf0 \cb1 \strokec4 \
+\cb3       \cf2 \strokec2 if\cf0 \strokec4  (isSupabaseConfigured() && supabase) \{\cb1 \
+\cb3         \cf2 \strokec2 const\cf0 \strokec4  \{ error: insertError \} = \cf2 \strokec2 await\cf0 \strokec4  supabase\cb1 \
+\cb3           .\cf2 \strokec2 from\cf0 \strokec4 (\cf6 \strokec6 'secret_santa_assignments'\cf0 \strokec4 )\cb1 \
+\cb3           .insert([newAssignment]);\cb1 \
+\cb3         \cb1 \
+\cb3         \cf2 \strokec2 if\cf0 \strokec4  (insertError) \cf2 \strokec2 throw\cf0 \strokec4  insertError;\cb1 \
+\cb3         \cf2 \strokec2 await\cf0 \strokec4  fetchData();\cb1 \
+\cb3       \} \cf2 \strokec2 else\cf0 \strokec4  \{\cb1 \
+\cb3         \cf2 \strokec2 const\cf0 \strokec4  updated = [...allAssignments, newAssignment];\cb1 \
+\cb3         setAllAssignments(updated);\cb1 \
+\cb3         localStorage.setItem(\cf5 \strokec5 LOCAL_STORAGE_KEY\cf0 \strokec4 , \cf5 \strokec5 JSON\cf0 \strokec4 .stringify(updated));\cb1 \
+\cb3       \}\cb1 \
+\
+\cb3       setAssignment(newAssignment);\cb1 \
+\
+\cb3     \} \cf2 \strokec2 catch\cf0 \strokec4  (err: \cf2 \strokec2 any\cf0 \strokec4 ) \{\cb1 \
+\cb3       setError(err.message || \cf6 \strokec6 "System Failure."\cf0 \strokec4 );\cb1 \
+\cb3     \} \cf2 \strokec2 finally\cf0 \strokec4  \{\cb1 \
+\cb3       setIsDrawing(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3     \}\cb1 \
+\cb3   \};\cb1 \
+\
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  handleAdminLogin = () => \{\cb1 \
+\cb3     \cf2 \strokec2 if\cf0 \strokec4  (adminPasswordInput === \cf5 \strokec5 ADMIN_PASSWORD\cf0 \strokec4 ) \{\cb1 \
+\cb3       setIsAdminAuthenticated(\cf2 \strokec2 true\cf0 \strokec4 );\cb1 \
+\cb3       setError(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3     \} \cf2 \strokec2 else\cf0 \strokec4  \{\cb1 \
+\cb3       setError(\cf6 \strokec6 "INVALID PROTOCOL CREDENTIALS"\cf0 \strokec4 );\cb1 \
+\cb3     \}\cb1 \
+\cb3   \};\cb1 \
+\
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  handleResetSystem = \cf2 \strokec2 async\cf0 \strokec4  () => \{\cb1 \
+\cb3     \cf2 \strokec2 if\cf0 \strokec4  (!confirm(\cf6 \strokec6 "WARNING: This will wipe all mission data permanently. Proceed?"\cf0 \strokec4 )) \cf2 \strokec2 return\cf0 \strokec4 ;\cb1 \
+\cb3     \cb1 \
+\cb3     setLoading(\cf2 \strokec2 true\cf0 \strokec4 );\cb1 \
+\cb3     \cf2 \strokec2 try\cf0 \strokec4  \{\cb1 \
+\cb3       \cf2 \strokec2 if\cf0 \strokec4  (isSupabaseConfigured()) \{\cb1 \
+\cb3         \cf2 \strokec2 await\cf0 \strokec4  resetDatabase();\cb1 \
+\cb3         \cf2 \strokec2 await\cf0 \strokec4  fetchData();\cb1 \
+\cb3       \} \cf2 \strokec2 else\cf0 \strokec4  \{\cb1 \
+\cb3         localStorage.removeItem(\cf5 \strokec5 LOCAL_STORAGE_KEY\cf0 \strokec4 );\cb1 \
+\cb3         setAllAssignments([]);\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf7 \strokec7 // Reset local states\cf0 \cb1 \strokec4 \
+\cb3       setCurrentUser(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3       setAssignment(\cf2 \strokec2 null\cf0 \strokec4 );\cb1 \
+\cb3       setIsAdminAuthenticated(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3       setShowAdmin(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3     \} \cf2 \strokec2 catch\cf0 \strokec4  (e: \cf2 \strokec2 any\cf0 \strokec4 ) \{\cb1 \
+\cb3       setError(e.message);\cb1 \
+\cb3     \} \cf2 \strokec2 finally\cf0 \strokec4  \{\cb1 \
+\cb3       setLoading(\cf2 \strokec2 false\cf0 \strokec4 );\cb1 \
+\cb3     \}\cb1 \
+\cb3   \};\cb1 \
+\
+\cb3   \cf7 \strokec7 // Animation Logic\cf0 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 const\cf0 \strokec4  [displayCandidate, setDisplayCandidate] = useState<\cf2 \strokec2 string\cf0 \strokec4 >(\cf6 \strokec6 "INITIALIZING"\cf0 \strokec4 );\cb1 \
+\cb3   useEffect(() => \{\cb1 \
+\cb3     \cf2 \strokec2 let\cf0 \strokec4  interval: \cf2 \strokec2 any\cf0 \strokec4 ;\cb1 \
+\cb3     \cf2 \strokec2 if\cf0 \strokec4  (isDrawing) \{\cb1 \
+\cb3       interval = setInterval(() => \{\cb1 \
+\cb3         setDisplayCandidate(\cf5 \strokec5 DESIGNERS\cf0 \strokec4 [\cf5 \strokec5 Math\cf0 \strokec4 .floor(\cf5 \strokec5 Math\cf0 \strokec4 .random() * \cf5 \strokec5 DESIGNERS\cf0 \strokec4 .length)]);\cb1 \
+\cb3       \}, \cf8 \strokec8 80\cf0 \strokec4 );\cb1 \
+\cb3     \}\cb1 \
+\cb3     \cf2 \strokec2 return\cf0 \strokec4  () => clearInterval(interval);\cb1 \
+\cb3   \}, [isDrawing]);\cb1 \
+\
+\cb3   \cf7 \strokec7 // Loading View\cf0 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 if\cf0 \strokec4  (loading) \{\cb1 \
+\cb3     \cf2 \strokec2 return\cf0 \strokec4  (\cb1 \
+\cb3       <\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3         <div className=\cf6 \strokec6 "h-96 flex flex-col items-center justify-center"\cf0 \strokec4 >\cb1 \
+\cb3           <div className=\cf6 \strokec6 "w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin mb-4"\cf0 \strokec4 ></div>\cb1 \
+\cb3           <span className=\cf6 \strokec6 "font-mono text-xs uppercase"\cf0 \strokec4 >\cf5 \strokec5 Loading\cf0 \strokec4  \cf5 \strokec5 Modules\cf0 \strokec4 ...</span>\cb1 \
+\cb3         </div>\cb1 \
+\cb3       </\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3     );\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf7 \strokec7 // --- ADMIN VIEW ---\cf0 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 if\cf0 \strokec4  (showAdmin) \{\cb1 \
+\cb3     \cf2 \strokec2 return\cf0 \strokec4  (\cb1 \
+\cb3       <\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3         <div className=\cf6 \strokec6 "flex justify-between items-center mb-8"\cf0 \strokec4 >\cb1 \
+\cb3            <h2 className=\cf6 \strokec6 "text-xl font-bold uppercase tracking-tight"\cf0 \strokec4 >\cf5 \strokec5 Overseer\cf0 \strokec4  \cf5 \strokec5 Mode\cf0 \strokec4 </h2>\cb1 \
+\cb3            <button onClick=\{() => setShowAdmin(\cf2 \strokec2 false\cf0 \strokec4 )\} className=\cf6 \strokec6 "text-xs font-mono underline"\cf0 \strokec4 >\cf5 \strokec5 EXIT\cf0 \strokec4 </button>\cb1 \
+\cb3         </div>\cb1 \
+\
+\cb3         \{!isAdminAuthenticated ? (\cb1 \
+\cb3           <div className=\cf6 \strokec6 "space-y-4"\cf0 \strokec4 >\cb1 \
+\cb3             <p className=\cf6 \strokec6 "font-mono text-xs text-gray-500"\cf0 \strokec4 >\cf5 \strokec5 Enter\cf0 \strokec4  \cf5 \strokec5 SysAdmin\cf0 \strokec4  credentials to view protocol status.</p>\cb1 \
+\cb3             <\cf5 \strokec5 TextInput\cf0 \strokec4  \cb1 \
+\cb3               \cf2 \strokec2 type\cf0 \strokec4 =\cf6 \strokec6 "password"\cf0 \strokec4  \cb1 \
+\cb3               placeholder=\cf6 \strokec6 "PASSWORD"\cf0 \strokec4  \cb1 \
+\cb3               value=\{adminPasswordInput\}\cb1 \
+\cb3               onChange=\{(e) => setAdminPasswordInput(e.target.value)\}\cb1 \
+\cb3             />\cb1 \
+\cb3             \{error && <p className=\cf6 \strokec6 "text-red-500 font-mono text-xs"\cf0 \strokec4 >\{error\}</p>\}\cb1 \
+\cb3             <\cf5 \strokec5 Button\cf0 \strokec4  onClick=\{handleAdminLogin\}>\cf5 \strokec5 AUTHENTICATE\cf0 \strokec4 </\cf5 \strokec5 Button\cf0 \strokec4 >\cb1 \
+\cb3           </div>\cb1 \
+\cb3         ) : (\cb1 \
+\cb3           <div className=\cf6 \strokec6 "space-y-8"\cf0 \strokec4 >\cb1 \
+\cb3              <\cf5 \strokec5 Section\cf0 \strokec4  title=\cf6 \strokec6 "Protocol Status"\cf0 \strokec4 >\cb1 \
+\cb3                <\cf5 \strokec5 AdminTable\cf0 \strokec4 >\cb1 \
+\cb3                  <thead>\cb1 \
+\cb3                    <tr className=\cf6 \strokec6 "bg-gray-50 border-b border-gray-200"\cf0 \strokec4 >\cb1 \
+\cb3                      <th className=\cf6 \strokec6 "p-3 font-normal text-gray-400"\cf0 \strokec4 >\cf5 \strokec5 OPERATIVE\cf0 \strokec4 </th>\cb1 \
+\cb3                      <th className=\cf6 \strokec6 "p-3 font-normal text-gray-400"\cf0 \strokec4 >\cf5 \strokec5 STATUS\cf0 \strokec4 </th>\cb1 \
+\cb3                      <th className=\cf6 \strokec6 "p-3 font-normal text-gray-400 text-right"\cf0 \strokec4 >\cf5 \strokec5 TIME\cf0 \strokec4 </th>\cb1 \
+\cb3                    </tr>\cb1 \
+\cb3                  </thead>\cb1 \
+\cb3                  <tbody>\cb1 \
+\cb3                    \{\cf5 \strokec5 DESIGNERS\cf0 \strokec4 .map(d => \{\cb1 \
+\cb3                      \cf2 \strokec2 const\cf0 \strokec4  match = allAssignments.find(a => a.santa === d);\cb1 \
+\cb3                      \cf2 \strokec2 return\cf0 \strokec4  (\cb1 \
+\cb3                        <tr key=\{d\} className=\cf6 \strokec6 "border-b border-gray-100 hover:bg-gray-50"\cf0 \strokec4 >\cb1 \
+\cb3                          <td className=\cf6 \strokec6 "p-3 font-bold"\cf0 \strokec4 >\{d\}</td>\cb1 \
+\cb3                          <td className=\cf6 \strokec6 "p-3"\cf0 \strokec4 >\cb1 \
+\cb3                            <\cf5 \strokec5 Badge\cf0 \strokec4  status=\{match ? \cf6 \strokec6 'assigned'\cf0 \strokec4  : \cf6 \strokec6 'pending'\cf0 \strokec4 \} />\cb1 \
+\cb3                          </td>\cb1 \
+\cb3                          <td className=\cf6 \strokec6 "p-3 text-gray-400 text-right"\cf0 \strokec4 >\cb1 \
+\cb3                            \{match ? \cf2 \strokec2 new\cf0 \strokec4  \cf5 \strokec5 Date\cf0 \strokec4 (match.timestamp).toLocaleTimeString([], \{hour: \cf6 \strokec6 '2-digit'\cf0 \strokec4 , minute:\cf6 \strokec6 '2-digit'\cf0 \strokec4 \}) : \cf6 \strokec6 '-'\cf0 \strokec4 \}\cb1 \
+\cb3                          </td>\cb1 \
+\cb3                        </tr>\cb1 \
+\cb3                      )\cb1 \
+\cb3                    \})\}\cb1 \
+\cb3                  </tbody>\cb1 \
+\cb3                </\cf5 \strokec5 AdminTable\cf0 \strokec4 >\cb1 \
+\cb3              </\cf5 \strokec5 Section\cf0 \strokec4 >\cb1 \
+\
+\cb3              <\cf5 \strokec5 Section\cf0 \strokec4  title=\cf6 \strokec6 "Danger Zone"\cf0 \strokec4 >\cb1 \
+\cb3                <div className=\cf6 \strokec6 "bg-red-50 border border-red-100 p-4"\cf0 \strokec4 >\cb1 \
+\cb3                  <p className=\cf6 \strokec6 "font-mono text-xs text-red-600 mb-4"\cf0 \strokec4 >\cb1 \
+\cb3                    \cf5 \strokec5 FLUSH\cf0 \strokec4  \cf5 \strokec5 DATA\cf0 \strokec4 : \cf5 \strokec5 Irreversible\cf0 \strokec4  action. \cf5 \strokec5 Will\cf0 \strokec4  reset all assignments.\cb1 \
+\cb3                  </p>\cb1 \
+\cb3                  <\cf5 \strokec5 Button\cf0 \strokec4  variant=\cf6 \strokec6 "danger"\cf0 \strokec4  onClick=\{handleResetSystem\}>\cb1 \
+\cb3                    \cf5 \strokec5 RESET\cf0 \strokec4  \cf5 \strokec5 PROTOCOL\cf0 \cb1 \strokec4 \
+\cb3                  </\cf5 \strokec5 Button\cf0 \strokec4 >\cb1 \
+\cb3                </div>\cb1 \
+\cb3              </\cf5 \strokec5 Section\cf0 \strokec4 >\cb1 \
+\cb3           </div>\cb1 \
+\cb3         )\}\cb1 \
+\cb3       </\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3     )\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf7 \strokec7 // --- LOGIN VIEW ---\cf0 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 if\cf0 \strokec4  (!currentUser) \{\cb1 \
+\cb3     \cf2 \strokec2 return\cf0 \strokec4  (\cb1 \
+\cb3       <\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3         <\cf5 \strokec5 Header\cf0 \strokec4  />\cb1 \
+\cb3         <\cf5 \strokec5 Section\cf0 \strokec4  title=\cf6 \strokec6 "Authentication Required"\cf0 \strokec4 >\cb1 \
+\cb3           <div className=\cf6 \strokec6 "grid grid-cols-1 sm:grid-cols-2 gap-2"\cf0 \strokec4 >\cb1 \
+\cb3             \{\cf5 \strokec5 DESIGNERS\cf0 \strokec4 .map((name) => \{\cb1 \
+\cb3               \cf2 \strokec2 const\cf0 \strokec4  hasDrawn = allAssignments.some(a => a.santa === name);\cb1 \
+\cb3               \cf2 \strokec2 return\cf0 \strokec4  (\cb1 \
+\cb3                 <button\cb1 \
+\cb3                   key=\{name\}\cb1 \
+\cb3                   onClick=\{() => handleLogin(name)\}\cb1 \
+\cb3                   className=\{\cf6 \strokec6 `\cf0 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf6 \cb3 \strokec6                     text-left px-4 py-3 font-mono text-xs uppercase transition-all border\cf0 \cb1 \strokec4 \
+\cf6 \cb3 \strokec6                     \cf0 \strokec4 $\{hasDrawn \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \cb3                       ? \cf6 \strokec6 'border-gray-200 text-gray-400 bg-gray-50 line-through decoration-1'\cf0 \strokec4  \cb1 \
+\cb3                       : \cf6 \strokec6 'border-black hover:bg-black hover:text-white'\cf0 \cb1 \strokec4 \
+\cb3                     \}\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf6 \cb3 \strokec6                   `\cf0 \strokec4 \}\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \cb3                 >\cb1 \
+\cb3                   \{name\}\cb1 \
+\cb3                 </button>\cb1 \
+\cb3               );\cb1 \
+\cb3             \})\}\cb1 \
+\cb3           </div>\cb1 \
+\cb3         </\cf5 \strokec5 Section\cf0 \strokec4 >\cb1 \
+\cb3         \cb1 \
+\cb3         <\cf5 \strokec5 Section\cf0 \strokec4 >\cb1 \
+\cb3           <div className=\cf6 \strokec6 "grid grid-cols-2 gap-4 mt-8"\cf0 \strokec4 >\cb1 \
+\cb3             <\cf5 \strokec5 StatDisplay\cf0 \strokec4  label=\cf6 \strokec6 "Total Operatives"\cf0 \strokec4  value=\{\cf5 \strokec5 DESIGNERS\cf0 \strokec4 .length\} />\cb1 \
+\cb3             <\cf5 \strokec5 StatDisplay\cf0 \strokec4  label=\cf6 \strokec6 "Missions Active"\cf0 \strokec4  value=\{allAssignments.length\} />\cb1 \
+\cb3           </div>\cb1 \
+\cb3         </\cf5 \strokec5 Section\cf0 \strokec4 >\cb1 \
+\
+\cb3         \{!isSupabaseConfigured() && (\cb1 \
+\cb3           <div className=\cf6 \strokec6 "mt-8 p-3 bg-yellow-50 border border-yellow-200 text-[10px] font-mono text-yellow-800 text-center"\cf0 \strokec4 >\cb1 \
+\cb3             \cf9 \strokec9 \uc0\u9888 \cf0 \strokec4  \cf5 \strokec5 DEMO\cf0 \strokec4  \cf5 \strokec5 MODE\cf0 \strokec4 : \cf5 \strokec5 Data\cf0 \strokec4  \cf2 \strokec2 is\cf0 \strokec4  stored locally. \cf5 \strokec5 Configure\cf0 \strokec4  \cf5 \strokec5 Supabase\cf0 \strokec4  \cf2 \strokec2 for\cf0 \strokec4  shared access.\cb1 \
+\cb3           </div>\cb1 \
+\cb3         )\}\cb1 \
+\cb3       </\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3     );\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf7 \strokec7 // --- DASHBOARD VIEW ---\cf0 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 return\cf0 \strokec4  (\cb1 \
+\cb3     <\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3       <div className=\cf6 \strokec6 "flex justify-between items-end mb-8 border-b border-black pb-4"\cf0 \strokec4 >\cb1 \
+\cb3         <div>\cb1 \
+\cb3           <span className=\cf6 \strokec6 "font-mono text-[10px] text-gray-400 uppercase block mb-1"\cf0 \strokec4 >\cf5 \strokec5 Logged\cf0 \strokec4  \cf2 \strokec2 in\cf0 \strokec4  \cf2 \strokec2 as\cf0 \strokec4 </span>\cb1 \
+\cb3           <h2 className=\cf6 \strokec6 "text-xl font-bold uppercase"\cf0 \strokec4 >\{currentUser\}</h2>\cb1 \
+\cb3         </div>\cb1 \
+\cb3         <button \cb1 \
+\cb3           onClick=\{() => setCurrentUser(\cf2 \strokec2 null\cf0 \strokec4 )\}\cb1 \
+\cb3           className=\cf6 \strokec6 "font-mono text-[10px] uppercase underline hover:no-underline"\cf0 \cb1 \strokec4 \
+\cb3         >\cb1 \
+\cb3           \cf5 \strokec5 Disconnect\cf0 \cb1 \strokec4 \
+\cb3         </button>\cb1 \
+\cb3       </div>\cb1 \
+\
+\cb3       \{assignment ? (\cb1 \
+\cb3         \cf7 \strokec7 // RESULT VIEW\cf0 \cb1 \strokec4 \
+\cb3         <div className=\cf6 \strokec6 "fade-in"\cf0 \strokec4 >\cb1 \
+\cb3            <div className=\cf6 \strokec6 "border-l-2 border-black pl-6 py-2 mb-8"\cf0 \strokec4 >\cb1 \
+\cb3              <span className=\cf6 \strokec6 "font-mono text-[10px] uppercase bg-black text-white px-1"\cf0 \strokec4 >\cf5 \strokec5 Assigned\cf0 \strokec4  \cf5 \strokec5 Target\cf0 \strokec4 </span>\cb1 \
+\cb3              <h1 className=\cf6 \strokec6 "text-4xl sm:text-5xl font-bold mt-2 uppercase tracking-tighter break-words"\cf0 \strokec4 >\cb1 \
+\cb3                \{assignment.receiver\}\cb1 \
+\cb3              </h1>\cb1 \
+\cb3            </div>\cb1 \
+\
+\cb3            <\cf5 \strokec5 Section\cf0 \strokec4  title=\cf6 \strokec6 "Mission Brief"\cf0 \strokec4 >\cb1 \
+\cb3              <div className=\cf6 \strokec6 "bg-gray-50 p-6 border border-gray-200 font-mono text-sm leading-relaxed relative"\cf0 \strokec4 >\cb1 \
+\cb3                 \{\cf7 \strokec7 /* Corner markers */\cf0 \strokec4 \}\cb1 \
+\cb3                 <span className=\cf6 \strokec6 "absolute top-0 left-0 w-2 h-2 border-t border-l border-black"\cf0 \strokec4 ></span>\cb1 \
+\cb3                 <span className=\cf6 \strokec6 "absolute top-0 right-0 w-2 h-2 border-t border-r border-black"\cf0 \strokec4 ></span>\cb1 \
+\cb3                 <span className=\cf6 \strokec6 "absolute bottom-0 left-0 w-2 h-2 border-b border-l border-black"\cf0 \strokec4 ></span>\cb1 \
+\cb3                 <span className=\cf6 \strokec6 "absolute bottom-0 right-0 w-2 h-2 border-b border-r border-black"\cf0 \strokec4 ></span>\cb1 \
+\cb3                 \cb1 \
+\cb3                 \{assignment.mission_brief\}\cb1 \
+\cb3              </div>\cb1 \
+\cb3            </\cf5 \strokec5 Section\cf0 \strokec4 >\cb1 \
+\cb3            \cb1 \
+\cb3            <div className=\cf6 \strokec6 "text-center mt-12"\cf0 \strokec4 >\cb1 \
+\cb3              <p className=\cf6 \strokec6 "font-mono text-[10px] text-gray-400 mb-4"\cf0 \strokec4 >\cb1 \
+\cb3                \cf5 \strokec5 Keep\cf0 \strokec4  \cf2 \strokec2 this\cf0 \strokec4  information confidential.\cb1 \
+\cb3              </p>\cb1 \
+\cb3            </div>\cb1 \
+\cb3         </div>\cb1 \
+\cb3       ) : (\cb1 \
+\cb3         \cf7 \strokec7 // DRAW VIEW\cf0 \cb1 \strokec4 \
+\cb3         <div className=\cf6 \strokec6 "fade-in py-8"\cf0 \strokec4 >\cb1 \
+\cb3           <div className=\cf6 \strokec6 "mb-12 text-center relative"\cf0 \strokec4 >\cb1 \
+\cb3             <div className=\cf6 \strokec6 "h-24 flex items-center justify-center overflow-hidden"\cf0 \strokec4 >\cb1 \
+\cb3                \{isDrawing ? (\cb1 \
+\cb3                  <span className=\cf6 \strokec6 "text-3xl font-mono font-bold animate-pulse"\cf0 \strokec4 >\{displayCandidate\}</span>\cb1 \
+\cb3                ) : (\cb1 \
+\cb3                  <div className=\cf6 \strokec6 "flex gap-2 justify-center"\cf0 \strokec4 >\cb1 \
+\cb3                    <div className=\cf6 \strokec6 "w-3 h-3 bg-gray-200 rounded-full"\cf0 \strokec4 ></div>\cb1 \
+\cb3                    <div className=\cf6 \strokec6 "w-3 h-3 bg-gray-200 rounded-full"\cf0 \strokec4 ></div>\cb1 \
+\cb3                    <div className=\cf6 \strokec6 "w-3 h-3 bg-gray-200 rounded-full"\cf0 \strokec4 ></div>\cb1 \
+\cb3                  </div>\cb1 \
+\cb3                )\}\cb1 \
+\cb3             </div>\cb1 \
+\cb3             <p className=\cf6 \strokec6 "font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-4"\cf0 \strokec4 >\cb1 \
+\cb3               \{isDrawing ? \cf6 \strokec6 'Running Selection Algorithm...'\cf0 \strokec4  : \cf6 \strokec6 'Ready to Assign'\cf0 \strokec4 \}\cb1 \
+\cb3             </p>\cb1 \
+\cb3           </div>\cb1 \
+\
+\cb3           \{error && (\cb1 \
+\cb3             <div className=\cf6 \strokec6 "mb-6 p-4 border border-red-500 bg-red-50 text-red-600 font-mono text-xs"\cf0 \strokec4 >\cb1 \
+\cb3               \cf5 \strokec5 ERROR\cf0 \strokec4 : \{error\}\cb1 \
+\cb3             </div>\cb1 \
+\cb3           )\}\cb1 \
+\
+\cb3           <\cf5 \strokec5 Button\cf0 \strokec4  onClick=\{performDraw\} disabled=\{isDrawing\}>\cb1 \
+\cb3              \{isDrawing ? \cf6 \strokec6 'CALCULATING...'\cf0 \strokec4  : \cf6 \strokec6 'INITIATE SEQUENCE'\cf0 \strokec4 \}\cb1 \
+\cb3           </\cf5 \strokec5 Button\cf0 \strokec4 >\cb1 \
+\cb3           \cb1 \
+\cb3           <p className=\cf6 \strokec6 "mt-6 text-center font-mono text-[10px] text-gray-400 max-w-xs mx-auto"\cf0 \strokec4 >\cb1 \
+\cb3             \cf5 \strokec5 By\cf0 \strokec4  clicking, you agree to execute the gift exchange protocol \cf2 \strokec2 with\cf0 \strokec4  extreme prejudice and creativity.\cb1 \
+\cb3           </p>\cb1 \
+\cb3         </div>\cb1 \
+\cb3       )\}\cb1 \
+\cb3     </\cf5 \strokec5 Container\cf0 \strokec4 >\cb1 \
+\cb3   );\cb1 \
+\cb3 \};\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 export\cf0 \strokec4  \cf2 \strokec2 default\cf0 \strokec4  \cf5 \strokec5 App\cf0 \strokec4 ;\cb1 \
+}
