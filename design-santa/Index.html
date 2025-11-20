@@ -1,100 +1,67 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.1">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #6d6d6d; -webkit-text-stroke: #6d6d6d}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #6b0001; -webkit-text-stroke: #6b0001}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #fb0007; -webkit-text-stroke: #fb0007}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #0000ff; -webkit-text-stroke: #0000ff}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; -webkit-text-stroke: #000000}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #900112; -webkit-text-stroke: #900112}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; -webkit-text-stroke: #000000; min-height: 14.0px}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #093c94; -webkit-text-stroke: #093c94}
-    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #0f7001; -webkit-text-stroke: #0f7001}
-    span.s1 {font-kerning: none; background-color: #fffffe}
-    span.s2 {font-kerning: none; color: #fb0007; background-color: #fffffe; -webkit-text-stroke: 0px #fb0007}
-    span.s3 {font-kerning: none; color: #2a2a2a; background-color: #fffffe; -webkit-text-stroke: 0px #2a2a2a}
-    span.s4 {font-kerning: none; color: #000000; background-color: #fffffe; -webkit-text-stroke: 0px #000000}
-    span.s5 {font-kerning: none; color: #0000ff; background-color: #fffffe; -webkit-text-stroke: 0px #0000ff}
-    span.s6 {font-kerning: none; color: #6b0001; background-color: #fffffe; -webkit-text-stroke: 0px #6b0001}
-    span.s7 {font-kerning: none; color: #093c94; background-color: #fffffe; -webkit-text-stroke: 0px #093c94}
-    span.s8 {font-kerning: none; color: #137646; background-color: #fffffe; -webkit-text-stroke: 0px #137646}
-    span.s9 {font-kerning: none}
-    span.s10 {font-kerning: none; color: #900112; background-color: #fffffe; -webkit-text-stroke: 0px #900112}
-  </style>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design Santa Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+      
+      :root {
+        --grid-color: rgba(0, 0, 0, 0.05);
+        --grid-size: 20px;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #fdfdfd;
+        color: #111;
+        background-image: 
+          linear-gradient(var(--grid-color) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+        background-size: var(--grid-size) var(--grid-size);
+      }
+      
+      .font-mono {
+        font-family: 'Space Mono', monospace;
+      }
+
+      /* Technical borders */
+      .tech-border {
+        border: 1px solid #000;
+      }
+      
+      .tech-border-dashed {
+        border: 1px dashed #ccc;
+      }
+
+      /* Smooth fade */
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out forwards;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@supabase/supabase-js": "https://aistudiocdn.com/@supabase/supabase-js@^2.83.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+  }
+}
+</script>
 </head>
-<body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE</span><span class="s2"> html</span><span class="s1">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">html</span><span class="s4"> </span><span class="s2">lang</span><span class="s3">=</span><span class="s5">"en"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">  </span></span><span class="s3">&lt;</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s1">charset</span><span class="s3">=</span><span class="s5">"UTF-8"</span><span class="s4"> </span><span class="s3">/&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s2">name</span><span class="s3">=</span><span class="s1">"viewport"</span><span class="s4"> </span><span class="s2">content</span><span class="s3">=</span><span class="s1">"width=device-width, initial-scale=1.0"</span><span class="s4"> </span><span class="s3">/&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">title</span><span class="s3">&gt;</span><span class="s1">Design Santa Protocol</span><span class="s3">&lt;/</span><span class="s6">title</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.tailwindcss.com"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s5">@import</span><span class="s4"> </span><span class="s7">url</span><span class="s4">(</span><span class="s1">'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap'</span><span class="s4">);</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span></span><span class="s6">:root</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s2">--grid-color:</span><span class="s1"> </span><span class="s7">rgba(</span><span class="s8">0</span><span class="s1">, </span><span class="s8">0</span><span class="s1">, </span><span class="s8">0</span><span class="s1">, </span><span class="s8">0.05</span><span class="s7">)</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">--grid-size:</span><span class="s4"> </span><span class="s8">20px</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p7"><span class="s9"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span></span><span class="s6">body</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s2">font-family:</span><span class="s1"> </span><span class="s10">'Inter'</span><span class="s1">, </span><span class="s7">sans-serif</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">background-color:</span><span class="s4"> </span><span class="s7">#fdfdfd</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s7">#111</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">background-image:</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">          </span></span><span class="s1">linear-gradient(var(--grid-color)</span><span class="s4"> </span><span class="s8">1px</span><span class="s4">, </span><span class="s1">transparent</span><span class="s4"> </span><span class="s8">1px</span><span class="s1">)</span><span class="s4">,</span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">          </span></span><span class="s1">linear-gradient(</span><span class="s8">90deg</span><span class="s4">, </span><span class="s1">var(--grid-color)</span><span class="s4"> </span><span class="s8">1px</span><span class="s4">, </span><span class="s1">transparent</span><span class="s4"> </span><span class="s8">1px</span><span class="s1">)</span><span class="s4">;</span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s2">background-size:</span><span class="s4"> </span><span class="s1">var(--grid-size)</span><span class="s4"> </span><span class="s1">var(--grid-size)</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s1">.font-mono</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s2">font-family:</span><span class="s1"> </span><span class="s10">'Space Mono'</span><span class="s1">, </span><span class="s7">monospace</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p7"><span class="s9"></span><br></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s1">/* Technical borders */</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s1">.tech-border</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s2">border:</span><span class="s1"> </span><span class="s8">1px</span><span class="s1"> </span><span class="s7">solid</span><span class="s1"> </span><span class="s7">#000</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s1">.tech-border-dashed</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s2">border:</span><span class="s1"> </span><span class="s8">1px</span><span class="s1"> </span><span class="s7">dashed</span><span class="s1"> </span><span class="s7">#ccc</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p7"><span class="s9"></span><br></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s1">/* Smooth fade */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span></span><span class="s6">.fade-in</span><span class="s1"> {</span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s2">animation:</span><span class="s4"> </span><span class="s1">fadeIn</span><span class="s4"> </span><span class="s8">0.5s</span><span class="s4"> </span><span class="s1">ease-in-out</span><span class="s4"> </span><span class="s1">forwards</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">      </span></span><span class="s1">@keyframes</span><span class="s4"> </span><span class="s7">fadeIn</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s7">from</span><span class="s1"> { </span><span class="s2">opacity:</span><span class="s1"> </span><span class="s8">0</span><span class="s1">; </span><span class="s2">transform:</span><span class="s1"> </span><span class="s7">translateY(</span><span class="s8">10px</span><span class="s7">)</span><span class="s1">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s7">to</span><span class="s1"> { </span><span class="s2">opacity:</span><span class="s1"> </span><span class="s8">1</span><span class="s1">; </span><span class="s2">transform:</span><span class="s1"> </span><span class="s7">translateY(</span><span class="s8">0</span><span class="s7">)</span><span class="s1">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">  </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">type</span><span class="s3">=</span><span class="s1">"importmap"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1">{</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>"imports": {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"react": "https://aistudiocdn.com/react@^19.2.0",</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"react/": "https://aistudiocdn.com/react@^19.2.0/",</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"@supabase/supabase-js": "https://aistudiocdn.com/@supabase/supabase-js@^2.83.0",</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"vite": "https://aistudiocdn.com/vite@^7.2.4",</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span>"@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p5"><span class="s1">}</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">  </span></span><span class="s3">&lt;</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"root"</span><span class="s3">&gt;&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">type</span><span class="s3">=</span><span class="s1">"module"</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"/index.tsx"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">  </span></span><span class="s3">&lt;/</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">html</span><span class="s3">&gt;</span></p>
-</body>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>
