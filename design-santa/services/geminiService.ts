@@ -1,14 +1,18 @@
 import { GoogleGenAI } from "@google/genai";
 
+// Accesso sicuro alla variabile d'ambiente.
+// Nota: Vite sostituirà 'process.env.API_KEY' con il valore stringa durante la build.
 const GEMINI_API_KEY = process.env.API_KEY || '';
 
 export const generateMissionBrief = async (receiverName: string): Promise<string> => {
   if (!GEMINI_API_KEY) {
-    return `Obiettivo: ${receiverName}. Il modulo AI è offline. Improvvisa un regalo con creatività analogica.`;
+    console.warn("API_KEY mancate. Modalità fallback attiva.");
+    return `Obiettivo: ${receiverName}. Il modulo AI è offline (Chiave API mancante). Improvvisa un regalo con creatività analogica.`;
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    // Usiamo un modello standard stabile.
     const model = "gemini-2.5-flash";
     
     const prompt = `
@@ -42,6 +46,6 @@ export const generateMissionBrief = async (receiverName: string): Promise<string
     return response.text || `Target: ${receiverName}. Procedere con l'acquisizione dell'asset immediatamente.`;
   } catch (error) {
     console.error("Gemini generation failed:", error);
-    return `Target: ${receiverName}. Procedere con l'acquisizione dell'asset immediatamente.`;
+    return `Target: ${receiverName}. Procedere con l'acquisizione dell'asset immediatamente. (Errore connessione AI)`;
   }
 };
